@@ -155,6 +155,118 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Arthas - java服务器监控神器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/05/14/Arthas - java服务器监控神器/">Arthas - java服务器监控神器</a>
+    </h1>
+  
+
+        
+        <a href="/2019/05/14/Arthas - java服务器监控神器/" class="archive-article-date">
+  	<time datetime="2019-05-14T03:42:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>Arthas 是Alibaba开源的Java诊断工具.</p>
+<p>Arthas支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 Tab 自动补全功能，进一步方便进行问题的定位和诊断.</p>
+<h3 id="为什么需要Arthas-它能做些什么"><a href="#为什么需要Arthas-它能做些什么" class="headerlink" title="为什么需要Arthas,它能做些什么?"></a>为什么需要Arthas,它能做些什么?</h3><p>1.我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？</p>
+<p>2.遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？</p>
+<p>3.线上遇到某个用户的数据处理有问题，但线上同样无法 debug，线下无法重现！</p>
+<p>4.是否有一个全局视角来查看系统的运行状况？</p>
+<p>5.有什么办法可以监控到JVM的实时运行状态？</p>
+<p>6.如果系统CPU占用突然暴涨，怎么快速定位问题？</p>
+<h3 id="官方文档"><a href="#官方文档" class="headerlink" title="官方文档"></a>官方文档</h3><p><a href="https://alibaba.github.io/arthas/index.html" target="_blank" rel="noopener">https://alibaba.github.io/arthas/index.html</a></p>
+<h3 id="启动Arthas"><a href="#启动Arthas" class="headerlink" title="启动Arthas"></a>启动Arthas</h3><p>下载jar包：wget <a href="https://alibaba.github.io/arthas/arthas-boot.jar" target="_blank" rel="noopener">https://alibaba.github.io/arthas/arthas-boot.jar</a></p>
+<p>启动： java -jar arthas-boot.jar</p>
+<h3 id="Arthas命令"><a href="#Arthas命令" class="headerlink" title="Arthas命令"></a>Arthas命令</h3><ul>
+<li><p>注意事项、小技巧</p>
+<ol>
+<li><p>help可以查看所有命令名称及描述</p>
+</li>
+<li><p>Arthas里每一个命令都有详细的帮助信息。可以用-h来查看。帮助信息里有EXAMPLES和WIKI链接。</p>
+</li>
+<li><p>可以通过 <code>history</code> 查看所有的历史命令</p>
+</li>
+</ol>
+</li>
+<li><p>查看当前系统的整体状况:</p>
+<p><strong>dashboard</strong> 命令可以查看当前系统的实时数据面板。</p>
+<p><strong>sysprop</strong> 可以打印所有的系统属性信息 </p>
+<p><strong>sysenv</strong> 命令可以获取到环境变量。和sysprop命令类似。</p>
+<p><strong>jvm</strong> 命令会打印出JVM的各种详细信息</p>
+<p><strong>classloader </strong>用来查看当前所有的类加载器,-c 指定加载器hash</p>
+</li>
+<li><p>热更新一条龙:</p>
+<p><strong>jad</strong> 反编译代码，类或者方法 可用 &gt; ,输出java文件，例如jad –-source-only  &gt; 文件路径/文件名.java，不加—source-only会带有类加载器信息不能编译成功.</p>
+<p><strong>mc</strong> 用来编译代码，指定java文件路径进行编译，实验的执行成功率很低</p>
+<p><strong>redefine</strong> 重新加载新编译好的class，指定class文件路径，成功率比较高一点，所以实际用时可以先用编辑器编译成class再用此命令加载到程序中</p>
+</li>
+<li><p>上帝模式，随便看:</p>
+<p><strong>thread 1</strong> 命令会打印线程ID 1的栈，不加1可打印出所有的线程，支持通道：thread | grep main</p>
+<p><strong>sc</strong> 查找JVM里已加载的类</p>
+<p><strong>sm</strong> 查找类的具体函数</p>
+<p><strong>monitor</strong> 对方法进行监控，输出每段时间的调用情况统计</p>
+<p><strong>trace</strong> 用于跟踪某个方法被调用，以及之后调用了哪些方法</p>
+<p><strong>stack</strong> 用于查看某个方法的调用栈</p>
+<p><strong>watch</strong> 命令可以查看函数的参数/返回值/异常信息等,watch 的第3个参数为返回值表达式，可以写Arthas中的内置对象，以下表格列出所有对象的不同含义：<img src="../assets/blogImg/arthas-Built-in-object.png" alt="img"></p>
+<p>watch/stack/trace这个三个命令都支持 <code>#cost</code> 筛选时间</p>
+<p><strong>ognl</strong> 可以动态执行代码,例如<strong>ognl <a href="mailto:&#39;@java.lang.System" target="_blank" rel="noopener">&#39;@java.lang.System</a>@out.println(“hello ognl”)’</strong> OGNL特殊用法请参考：<a href="https://github.com/alibaba/arthas/issues/71" target="_blank" rel="noopener">https://github.com/alibaba/arthas/issues/71</a></p>
+</li>
+<li><p>退出Arthas</p>
+<p><strong>exit</strong> 或者 <strong>quit</strong> 命令可以退出当前session，arthas server还在目标进程中运行。</p>
+<p><strong>shutdown</strong> 可以完全退出Arthas</p>
+</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/05/14/Arthas - java服务器监控神器/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-获取客户端真实IP的方式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
