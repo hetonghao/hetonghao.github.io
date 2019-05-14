@@ -6,21 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Arthas - java服务器监控神器 | 何同昊blog</title>
+  <title>Web服务获取客户端真实IP的方式 | 何同昊blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="简介Arthas 是Alibaba开源的Java诊断工具. Arthas支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 Tab 自动补全功能，进一步方便进行问题的定位和诊断. 为什么需要Arthas,它能做些什么?1.我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？ 2.遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？">
+  <meta name="description" content="前言今天我们开发的项目在测试环境转生产环境之后，登录功能出现了与测试环境不一致的问题，检查之后发现是保存在数据库的IP地址超过了15位长度限制，可是通常使用的IP地址是一个32bit的数字，也就是我们常说的IPv4标准，这32bit的数字分成四组，也就是常见的255.255.255.255的样式，为什么会超过15位呢？">
+<meta name="keywords" content="Java,WebServer,Nginx">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Arthas - java服务器监控神器">
-<meta property="og:url" content="http://yoursite.com/2019/05/14/Arthas - java服务器监控神器/index.html">
+<meta property="og:title" content="Web服务获取客户端真实IP的方式">
+<meta property="og:url" content="http://yoursite.com/2019/05/14/Web服务获取客户端真实IP的方式/index.html">
 <meta property="og:site_name" content="何同昊blog">
-<meta property="og:description" content="简介Arthas 是Alibaba开源的Java诊断工具. Arthas支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 Tab 自动补全功能，进一步方便进行问题的定位和诊断. 为什么需要Arthas,它能做些什么?1.我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？ 2.遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？">
+<meta property="og:description" content="前言今天我们开发的项目在测试环境转生产环境之后，登录功能出现了与测试环境不一致的问题，检查之后发现是保存在数据库的IP地址超过了15位长度限制，可是通常使用的IP地址是一个32bit的数字，也就是我们常说的IPv4标准，这32bit的数字分成四组，也就是常见的255.255.255.255的样式，为什么会超过15位呢？">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/2019/05/14/assets/blogImg/arthas-Built-in-object.png">
-<meta property="og:updated_time" content="2019-05-14T03:59:03.219Z">
+<meta property="og:updated_time" content="2019-05-14T07:44:54.452Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Arthas - java服务器监控神器">
-<meta name="twitter:description" content="简介Arthas 是Alibaba开源的Java诊断工具. Arthas支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 Tab 自动补全功能，进一步方便进行问题的定位和诊断. 为什么需要Arthas,它能做些什么?1.我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？ 2.遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？">
-<meta name="twitter:image" content="http://yoursite.com/2019/05/14/assets/blogImg/arthas-Built-in-object.png">
+<meta name="twitter:title" content="Web服务获取客户端真实IP的方式">
+<meta name="twitter:description" content="前言今天我们开发的项目在测试环境转生产环境之后，登录功能出现了与测试环境不一致的问题，检查之后发现是保存在数据库的IP地址超过了15位长度限制，可是通常使用的IP地址是一个32bit的数字，也就是我们常说的IPv4标准，这32bit的数字分成四组，也就是常见的255.255.255.255的样式，为什么会超过15位呢？">
   
     <link rel="alternative" href="/atom.xml" title="何同昊blog" type="application/atom+xml">
   
@@ -55,15 +54,13 @@
 		  <h1 class="header-author"><a href="/">何同昊</a></h1>
 		</hgroup>
 		
-		<p class="header-subtitle">何同昊的博客.</p>
+		<p class="header-subtitle">很惭愧,只做了一点微小的工作,谢谢大家.</p>
 		
 
 		<nav class="header-menu">
 			<ul>
 			
 				<li><a href="/">主页</a></li>
-	        
-				<li><a href="/tags/随笔/">随笔</a></li>
 	        
 			</ul>
 		</nav>
@@ -87,10 +84,6 @@
 				
 					<a class="github" target="_blank" href="https://github.com/hetonghao" title="github"><i class="icon-github"></i></a>
 		        
-					<a class="qq" target="_blank" href="/1216040658" title="qq"><i class="icon-qq"></i></a>
-		        
-					<a class="weixin" target="_blank" href="#" title="weixin"><i class="icon-weixin"></i></a>
-		        
 			</div>
 		</nav>
 	</header>		
@@ -113,11 +106,9 @@
 			  <h1 class="header-author js-header-author">何同昊</h1>
 			</hgroup>
 			
-			<p class="header-subtitle"><i class="icon icon-quo-left"></i>何同昊的博客.<i class="icon icon-quo-right"></i></p>
+			<p class="header-subtitle"><i class="icon icon-quo-left"></i>很惭愧,只做了一点微小的工作,谢谢大家.<i class="icon icon-quo-right"></i></p>
 			
 			
-			
-				
 			
 				
 			
@@ -128,10 +119,6 @@
 					
 						<a class="github" target="_blank" href="https://github.com/hetonghao" title="github"><i class="icon-github"></i></a>
 			        
-						<a class="qq" target="_blank" href="/1216040658" title="qq"><i class="icon-qq"></i></a>
-			        
-						<a class="weixin" target="_blank" href="#" title="weixin"><i class="icon-weixin"></i></a>
-			        
 				</div>
 			</nav>
 
@@ -139,9 +126,7 @@
 				<ul style="width: 50%">
 				
 				
-					<li style="width: 50%"><a href="/">主页</a></li>
-		        
-					<li style="width: 50%"><a href="/tags/随笔/">随笔</a></li>
+					<li style="width: 100%"><a href="/">主页</a></li>
 		        
 				</ul>
 			</nav>
@@ -156,76 +141,49 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Arthas - java服务器监控神器" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Web服务获取客户端真实IP的方式" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Arthas - java服务器监控神器
+      Web服务获取客户端真实IP的方式
     </h1>
   
 
         
-        <a href="/2019/05/14/Arthas - java服务器监控神器/" class="archive-article-date">
-  	<time datetime="2019-05-14T03:42:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-14</time>
+        <a href="/2019/05/14/Web服务获取客户端真实IP的方式/" class="archive-article-date">
+  	<time datetime="2019-05-14T01:31:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-14</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>Arthas 是Alibaba开源的Java诊断工具.</p>
-<p>Arthas支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 Tab 自动补全功能，进一步方便进行问题的定位和诊断.</p>
-<h3 id="为什么需要Arthas-它能做些什么"><a href="#为什么需要Arthas-它能做些什么" class="headerlink" title="为什么需要Arthas,它能做些什么?"></a>为什么需要Arthas,它能做些什么?</h3><p>1.我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？</p>
-<p>2.遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？</p>
-<p>3.线上遇到某个用户的数据处理有问题，但线上同样无法 debug，线下无法重现！</p>
-<p>4.是否有一个全局视角来查看系统的运行状况？</p>
-<p>5.有什么办法可以监控到JVM的实时运行状态？</p>
-<p>6.如果系统CPU占用突然暴涨，怎么快速定位问题？</p>
-<h3 id="官方文档"><a href="#官方文档" class="headerlink" title="官方文档"></a>官方文档</h3><p><a href="https://alibaba.github.io/arthas/index.html" target="_blank" rel="noopener">https://alibaba.github.io/arthas/index.html</a></p>
-<h3 id="启动Arthas"><a href="#启动Arthas" class="headerlink" title="启动Arthas"></a>启动Arthas</h3><p>下载jar包：wget <a href="https://alibaba.github.io/arthas/arthas-boot.jar" target="_blank" rel="noopener">https://alibaba.github.io/arthas/arthas-boot.jar</a></p>
-<p>启动： java -jar arthas-boot.jar</p>
-<h3 id="Arthas命令"><a href="#Arthas命令" class="headerlink" title="Arthas命令"></a>Arthas命令</h3><ul>
-<li><p>注意事项、小技巧</p>
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>今天我们开发的项目在测试环境转生产环境之后，登录功能出现了与测试环境不一致的问题，检查之后发现是保存在数据库的IP地址超过了15位长度限制，可是通常使用的IP地址是一个32bit的数字，也就是我们常说的IPv4标准，这32bit的数字分成四组，也就是常见的255.255.255.255的样式，为什么会超过15位呢？</p>
+<a id="more"></a>
+<h3 id="检查、分析问题"><a href="#检查、分析问题" class="headerlink" title="检查、分析问题"></a>检查、分析问题</h3><p>接下来通过与cto、运维的沟通得知，我们生产环境服务器是部署在VPN环境，用了多层反向代理。在Servlet里，获取客户端的IP地址的方法是：request.getRemoteAddr()，这种方法在大部分情况下都是有效的。但是在通过了Apache，Squid，Nginx等反向代理软件就不能获取到客户端的真实IP地址了。例如将<a href="http://192.168.101.88:80/" target="_blank" rel="noopener">http://192.168.101.88:80/</a> 的URL反向代理为<a href="http://hetonghao.com/" target="_blank" rel="noopener">http://hetonghao.com/</a> 的URL时，用request.getRemoteAddr()方法获取的IP地址是：127.0.0.1　或192.168.101.88，而并不是客户端的真实IP。</p>
+<p>原来是client端直接请求服务端，这时候通过request.getRemoteAddr()方法可以直接获取客户端的IP。但是做了代理之后呢，client端不是直接请求服务端，而是先请求代理服务器，由代理器去请求服务端，这时候服务端通过request.getRemoteAddr()方法拿到的理所当然是代理服务器的地址了。</p>
+<p>接着我和运维分别检查了服务器获取IP的代码和Nginx反向代理Request Head的配置，发现我们后端服务器获取Ip地址的代码是有做对反向代理的处理。而运维也正常的设置了Request Head，解析IP地址的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getIpAddr</span><span class="params">(ServletRequest request)</span> </span>&#123;</span><br><span class="line">     HttpServletRequest localRequest = (HttpServletRequest)request;</span><br><span class="line">     String ip = localRequest.getHeader(<span class="string">"x-forwarded-for"</span>);</span><br><span class="line">     <span class="keyword">if</span> (ip == <span class="keyword">null</span> || ip.length() == <span class="number">0</span> || <span class="string">"unknown"</span>.equalsIgnoreCase(ip)) &#123;</span><br><span class="line">         ip = localRequest.getHeader(<span class="string">"Proxy-Client-IP"</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">if</span> (ip == <span class="keyword">null</span> || ip.length() == <span class="number">0</span> || <span class="string">"unknown"</span>.equalsIgnoreCase(ip)) &#123;</span><br><span class="line">         ip = localRequest.getHeader(<span class="string">"WL-Proxy-Client-IP"</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">if</span> (ip == <span class="keyword">null</span> || ip.length() == <span class="number">0</span> || <span class="string">"unknown"</span>.equalsIgnoreCase(ip)) &#123;</span><br><span class="line">         ip = request.getRemoteAddr();</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span> ip;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>运维Nginx的配置如下(Nginx标准配置)：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">proxy_set_header</span> X-Real-IP    <span class="variable">$remote_addr</span>;</span><br><span class="line"><span class="attribute">proxy_set_header</span> X-Forwarded-For    <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br></pre></td></tr></table></figure>
+<p>然后连上服务器用Arthas在线监控了这个方法，发现从”x-forwarded-for”得到的的IP地址是多个IP用逗号”,”隔开。运维查了配置的详细处理:<a href="https://blog.csdn.net/bigtree_3721/article/details/72820594" target="_blank" rel="noopener">参考Nginx X-Forwarded-For和$proxy_add_x_forwarded_for的说明</a>。</p>
+<h3 id="X-Forwarded-For的定义"><a href="#X-Forwarded-For的定义" class="headerlink" title="X-Forwarded-For的定义"></a>X-Forwarded-For的定义</h3><blockquote>
+<p>X-Forwarded-For:简称XFF头，它代表客户端，也就是HTTP的请求端真实的IP，只有在通过了HTTP 代理或者负载均衡服务器时才会添加该项。它不是RFC中定义的标准请求头信息，在squid缓存代理服务器开发文档中可以找到该项的详细介绍。<br>标准格式如下：<br>X-Forwarded-For: client1, proxy1, proxy2<br>从标准格式可以看出，X-Forwarded-For头信息可以有多个，中间用逗号分隔，<strong>第一项为真实的客户端ip，剩下的就是曾经经过的代理或负载均衡的ip地址，经过几个就会出现几个</strong>。</p>
+</blockquote>
+<h3 id="问题的关键"><a href="#问题的关键" class="headerlink" title="问题的关键"></a>问题的关键</h3><blockquote>
+<p>在默认情况下，Nginx并不会对X-Forwarded-For头做任何的处理，除非用户使用proxy_set_header 参数设置:</p>
+<blockquote>
 <ol>
-<li><p>help可以查看所有命令名称及描述</p>
-</li>
-<li><p>Arthas里每一个命令都有详细的帮助信息。可以用-h来查看。帮助信息里有EXAMPLES和WIKI链接。</p>
-</li>
-<li><p>可以通过 <code>history</code> 查看所有的历史命令</p>
-</li>
+<li>proxy_set_header X-Forwarded-For     $proxy_add_x_forwarded_for; </li>
 </ol>
-</li>
-<li><p>查看当前系统的整体状况:</p>
-<p><strong>dashboard</strong> 命令可以查看当前系统的实时数据面板。</p>
-<p><strong>sysprop</strong> 可以打印所有的系统属性信息 </p>
-<p><strong>sysenv</strong> 命令可以获取到环境变量。和sysprop命令类似。</p>
-<p><strong>jvm</strong> 命令会打印出JVM的各种详细信息</p>
-<p><strong>classloader </strong>用来查看当前所有的类加载器,-c 指定加载器hash</p>
-</li>
-<li><p>热更新一条龙:</p>
-<p><strong>jad</strong> 反编译代码，类或者方法 可用 &gt; ,输出java文件，例如jad –-source-only  &gt; 文件路径/文件名.java，不加—source-only会带有类加载器信息不能编译成功.</p>
-<p><strong>mc</strong> 用来编译代码，指定java文件路径进行编译，实验的执行成功率很低</p>
-<p><strong>redefine</strong> 重新加载新编译好的class，指定class文件路径，成功率比较高一点，所以实际用时可以先用编辑器编译成class再用此命令加载到程序中</p>
-</li>
-<li><p>上帝模式，随便看:</p>
-<p><strong>thread 1</strong> 命令会打印线程ID 1的栈，不加1可打印出所有的线程，支持通道：thread | grep main</p>
-<p><strong>sc</strong> 查找JVM里已加载的类</p>
-<p><strong>sm</strong> 查找类的具体函数</p>
-<p><strong>monitor</strong> 对方法进行监控，输出每段时间的调用情况统计</p>
-<p><strong>trace</strong> 用于跟踪某个方法被调用，以及之后调用了哪些方法</p>
-<p><strong>stack</strong> 用于查看某个方法的调用栈</p>
-<p><strong>watch</strong> 命令可以查看函数的参数/返回值/异常信息等,watch 的第3个参数为返回值表达式，可以写Arthas中的内置对象，以下表格列出所有对象的不同含义：<img src="../assets/blogImg/arthas-Built-in-object.png" alt="img"></p>
-<p>watch/stack/trace这个三个命令都支持 <code>#cost</code> 筛选时间</p>
-<p><strong>ognl</strong> 可以动态执行代码,例如<strong>ognl <a href="mailto:&#39;@java.lang.System" target="_blank" rel="noopener">&#39;@java.lang.System</a>@out.println(“hello ognl”)’</strong> OGNL特殊用法请参考：<a href="https://github.com/alibaba/arthas/issues/71" target="_blank" rel="noopener">https://github.com/alibaba/arthas/issues/71</a></p>
-</li>
-<li><p>退出Arthas</p>
-<p><strong>exit</strong> 或者 <strong>quit</strong> 命令可以退出当前session，arthas server还在目标进程中运行。</p>
-<p><strong>shutdown</strong> 可以完全退出Arthas</p>
-</li>
-</ul>
+</blockquote>
+<p><strong>&#36;remote_addr用逗号分开，如果没有”X-Forwarded-For” 请求头，则  &#36;proxy_add_x_forwarded_for等于$remote_addr。&#36;remote_addr变量的值是客户端的IP。</strong></p>
+</blockquote>
+<h3 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h3><p>找到了问题的关键，于是运维先将” X-Forwarded-For”直接设置成&#36;remote_addr（这不符合这个head的标准定义）。</p>
+<p>而我们后端为了避免以后不会出现类似的问题，可以通过”X-Real-IP”—&gt;”X-Forwarded-For”—&gt;”remote_addr”的顺序拿到真实IP，注意拿到”X-Forwarded-For”之后判断如果为多个IP，取第一个即可。</p>
 
       
 
@@ -255,7 +213,37 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">WebServer</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Nginx</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
 
       
 
@@ -305,7 +293,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/05/14/Arthas - java服务器监控神器/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/05/14/Web服务获取客户端真实IP的方式/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -320,8 +308,8 @@
 <nav id="article-nav">
   
   
-    <a href="/2019/05/14/获取客户端真实IP的方式/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">获取客户端真实IP的方式</div>
+    <a href="/2019/05/13/Arthas - java服务监控神器/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Arthas - java服务监控神器</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -445,6 +433,26 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Arthas</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">诊断、调试</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">WebServer</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
+              </li>
             
             <div class="clearfix"></div>
           </ul>
@@ -495,27 +503,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
         <ul class="search-ul">
           
             <li class="search-li">
-              <a href="https://hexo.io/zh-cn/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>hexo</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+              <a href="https://hexo.io/zh-cn/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>Hexo</a>
             </li>
           
         </ul>
@@ -526,7 +514,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     
     	<section class="tools-section tools-section-me" q-show="aboutme">
   	  	
-  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  		<div class="aboutme-wrap" id="js-aboutme">在深圳为了梦想打拼的90后&lt;br&gt;&lt;br&gt;很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
   	  	
     	</section>
     
