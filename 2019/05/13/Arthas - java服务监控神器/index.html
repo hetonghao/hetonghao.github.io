@@ -16,12 +16,12 @@
 <meta property="og:site_name" content="何同昊blog">
 <meta property="og:description" content="简介Arthas 是Alibaba开源的Java诊断工具. Arthas支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 Tab 自动补全功能，进一步方便进行问题的定位和诊断. 为什么需要Arthas,它能做些什么?1.我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？ 2.遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/2019/05/13/assets/blogImg/arthas-Built-in-object.png">
-<meta property="og:updated_time" content="2019-05-14T07:44:52.926Z">
+<meta property="og:image" content="http://yoursite.com/assets/blogImg/arthas-Built-in-object.png">
+<meta property="og:updated_time" content="2019-06-13T04:41:05.894Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Arthas - java服务监控神器">
 <meta name="twitter:description" content="简介Arthas 是Alibaba开源的Java诊断工具. Arthas支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 Tab 自动补全功能，进一步方便进行问题的定位和诊断. 为什么需要Arthas,它能做些什么?1.我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？ 2.遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？">
-<meta name="twitter:image" content="http://yoursite.com/2019/05/13/assets/blogImg/arthas-Built-in-object.png">
+<meta name="twitter:image" content="http://yoursite.com/assets/blogImg/arthas-Built-in-object.png">
   
     <link rel="alternative" href="/atom.xml" title="何同昊blog" type="application/atom+xml">
   
@@ -205,7 +205,7 @@
 <p><strong>monitor</strong> 对方法进行监控，输出每段时间的调用情况统计</p>
 <p><strong>trace</strong> 用于跟踪某个方法被调用，以及之后调用了哪些方法</p>
 <p><strong>stack</strong> 用于查看某个方法的调用栈</p>
-<p><strong>watch</strong> 命令可以查看函数的参数/返回值/异常信息等,watch 的第3个参数为返回值表达式，可以写Arthas中的内置对象，以下表格列出所有对象的不同含义：<img src="../assets/blogImg/arthas-Built-in-object.png" alt="img"></p>
+<p><strong>watch</strong> 命令可以查看函数的参数/返回值/异常信息等,watch 的第3个参数为返回值表达式，可以写Arthas中的内置对象，以下表格列出所有对象的不同含义：<img src="/assets/blogImg/arthas-Built-in-object.png" alt="img"></p>
 <p>watch/stack/trace这个三个命令都支持 <code>#cost</code> 筛选时间</p>
 <p><strong>ognl</strong> 可以动态执行代码,例如<strong><code>ognl &#39;@java.lang.System@out.println(&quot;hello ognl&quot;)&#39;</code></strong> OGNL特殊用法请参考：<a href="https://github.com/alibaba/arthas/issues/71" target="_blank" rel="noopener">https://github.com/alibaba/arthas/issues/71</a></p>
 </li>
