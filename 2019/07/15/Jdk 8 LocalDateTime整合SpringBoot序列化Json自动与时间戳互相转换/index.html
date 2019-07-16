@@ -6,20 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Web服务获取客户端真实IP的方式 | 何同昊blog</title>
+  <title>Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换 | 何同昊blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前言今天我们开发的项目在测试环境转生产环境之后，登录功能出现了与测试环境不一致的问题，检查之后发现是保存在数据库的IP地址超过了15位长度限制，可是通常使用的IP地址是一个32bit的数字，也就是我们常说的IPv4标准，这32bit的数字分成四组，也就是常见的255.255.255.255的样式，为什么会超过15位呢？">
-<meta name="keywords" content="Java,WebServer,Nginx">
+  <meta name="description" content="Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换以前用的是Date作为时间组件，SpringMvc会自动进行 Date时间戳 的转换,然而新项目换成Jdk8新日期时间Api，就不会自动转换成时间戳了,如果强行接收时间戳给新日期时间Api则会直接报400。如果直接返回新日期时间Api则会返回类似下图的结果，这可能不是我们想要的，前端处理起来也没有时间戳">
+<meta name="keywords" content="WebServer,Java8,Spring Boot">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Web服务获取客户端真实IP的方式">
-<meta property="og:url" content="http://yoursite.com/2019/05/14/Web服务获取客户端真实IP的方式/index.html">
+<meta property="og:title" content="Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换">
+<meta property="og:url" content="http://yoursite.com/2019/07/15/Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换/index.html">
 <meta property="og:site_name" content="何同昊blog">
-<meta property="og:description" content="前言今天我们开发的项目在测试环境转生产环境之后，登录功能出现了与测试环境不一致的问题，检查之后发现是保存在数据库的IP地址超过了15位长度限制，可是通常使用的IP地址是一个32bit的数字，也就是我们常说的IPv4标准，这32bit的数字分成四组，也就是常见的255.255.255.255的样式，为什么会超过15位呢？">
+<meta property="og:description" content="Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换以前用的是Date作为时间组件，SpringMvc会自动进行 Date时间戳 的转换,然而新项目换成Jdk8新日期时间Api，就不会自动转换成时间戳了,如果强行接收时间戳给新日期时间Api则会直接报400。如果直接返回新日期时间Api则会返回类似下图的结果，这可能不是我们想要的，前端处理起来也没有时间戳">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-14T07:44:54.000Z">
+<meta property="og:image" content="http://yoursite.com/assets/blogImg/image-20190716100252522.png">
+<meta property="og:image" content="http://yoursite.com/assets/blogImg/image-20190716095824359.png">
+<meta property="og:updated_time" content="2019-07-16T02:23:56.131Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Web服务获取客户端真实IP的方式">
-<meta name="twitter:description" content="前言今天我们开发的项目在测试环境转生产环境之后，登录功能出现了与测试环境不一致的问题，检查之后发现是保存在数据库的IP地址超过了15位长度限制，可是通常使用的IP地址是一个32bit的数字，也就是我们常说的IPv4标准，这32bit的数字分成四组，也就是常见的255.255.255.255的样式，为什么会超过15位呢？">
+<meta name="twitter:title" content="Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换">
+<meta name="twitter:description" content="Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换以前用的是Date作为时间组件，SpringMvc会自动进行 Date时间戳 的转换,然而新项目换成Jdk8新日期时间Api，就不会自动转换成时间戳了,如果强行接收时间戳给新日期时间Api则会直接报400。如果直接返回新日期时间Api则会返回类似下图的结果，这可能不是我们想要的，前端处理起来也没有时间戳">
+<meta name="twitter:image" content="http://yoursite.com/assets/blogImg/image-20190716100252522.png">
   
     <link rel="alternative" href="/atom.xml" title="何同昊blog" type="application/atom+xml">
   
@@ -141,49 +144,55 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Web服务获取客户端真实IP的方式" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Web服务获取客户端真实IP的方式
+      Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换
     </h1>
   
 
         
-        <a href="/2019/05/14/Web服务获取客户端真实IP的方式/" class="archive-article-date">
-  	<time datetime="2019-05-14T01:31:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-14</time>
+        <a href="/2019/07/15/Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换/" class="archive-article-date">
+  	<time datetime="2019-07-15T07:23:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-15</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>今天我们开发的项目在测试环境转生产环境之后，登录功能出现了与测试环境不一致的问题，检查之后发现是保存在数据库的IP地址超过了15位长度限制，可是通常使用的IP地址是一个32bit的数字，也就是我们常说的IPv4标准，这32bit的数字分成四组，也就是常见的255.255.255.255的样式，为什么会超过15位呢？</p>
+        <h2 id="Jdk-8-LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换"><a href="#Jdk-8-LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换" class="headerlink" title="Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换"></a>Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换</h2><p>以前用的是Date作为时间组件，SpringMvc会自动进行 <strong>Date<--->时间戳</---></strong> 的转换,然而新项目换成Jdk8<code>新日期时间Api</code>，就不会自动转换成时间戳了,如果强行接收时间戳给<code>新日期时间Api</code>则会直接报400。如果直接返回<code>新日期时间Api</code>则会返回类似下图的结果，这可能不是我们想要的，前端处理起来也没有时间戳来得方便。</p>
 <a id="more"></a>
-<h3 id="检查、分析问题"><a href="#检查、分析问题" class="headerlink" title="检查、分析问题"></a>检查、分析问题</h3><p>接下来通过与cto、运维的沟通得知，我们生产环境服务器是部署在VPN环境，用了多层反向代理。在Servlet里，获取客户端的IP地址的方法是：request.getRemoteAddr()，这种方法在大部分情况下都是有效的。但是在通过了Apache，Squid，Nginx等反向代理软件就不能获取到客户端的真实IP地址了。例如将<a href="http://192.168.101.88:80/" target="_blank" rel="noopener">http://192.168.101.88:80/</a> 的URL反向代理为<a href="http://hetonghao.com/" target="_blank" rel="noopener">http://hetonghao.com/</a> 的URL时，用request.getRemoteAddr()方法获取的IP地址是：127.0.0.1　或192.168.101.88，而并不是客户端的真实IP。</p>
-<p>原来是client端直接请求服务端，这时候通过request.getRemoteAddr()方法可以直接获取客户端的IP。但是做了代理之后呢，client端不是直接请求服务端，而是先请求代理服务器，由代理器去请求服务端，这时候服务端通过request.getRemoteAddr()方法拿到的理所当然是代理服务器的地址了。</p>
-<p>接着我和运维分别检查了服务器获取IP的代码和Nginx反向代理Request Head的配置，发现我们后端服务器获取Ip地址的代码是有做对反向代理的处理。而运维也正常的设置了Request Head，解析IP地址的代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getIpAddr</span><span class="params">(ServletRequest request)</span> </span>&#123;</span><br><span class="line">     HttpServletRequest localRequest = (HttpServletRequest)request;</span><br><span class="line">     String ip = localRequest.getHeader(<span class="string">"x-forwarded-for"</span>);</span><br><span class="line">     <span class="keyword">if</span> (ip == <span class="keyword">null</span> || ip.length() == <span class="number">0</span> || <span class="string">"unknown"</span>.equalsIgnoreCase(ip)) &#123;</span><br><span class="line">         ip = localRequest.getHeader(<span class="string">"Proxy-Client-IP"</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">if</span> (ip == <span class="keyword">null</span> || ip.length() == <span class="number">0</span> || <span class="string">"unknown"</span>.equalsIgnoreCase(ip)) &#123;</span><br><span class="line">         ip = localRequest.getHeader(<span class="string">"WL-Proxy-Client-IP"</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">if</span> (ip == <span class="keyword">null</span> || ip.length() == <span class="number">0</span> || <span class="string">"unknown"</span>.equalsIgnoreCase(ip)) &#123;</span><br><span class="line">         ip = request.getRemoteAddr();</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span> ip;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>运维Nginx的配置如下(Nginx标准配置)：</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">proxy_set_header</span> X-Real-IP    <span class="variable">$remote_addr</span>;</span><br><span class="line"><span class="attribute">proxy_set_header</span> X-Forwarded-For    <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br></pre></td></tr></table></figure>
-<p>然后连上服务器用Arthas在线监控了这个方法，发现从”x-forwarded-for”得到的的IP地址是多个IP用逗号”,”隔开。运维查了配置的详细处理:<a href="https://blog.csdn.net/bigtree_3721/article/details/72820594" target="_blank" rel="noopener">参考Nginx X-Forwarded-For和$proxy_add_x_forwarded_for的说明</a>。</p>
-<h3 id="X-Forwarded-For的定义"><a href="#X-Forwarded-For的定义" class="headerlink" title="X-Forwarded-For的定义"></a>X-Forwarded-For的定义</h3><blockquote>
-<p>X-Forwarded-For:简称XFF头，它代表客户端，也就是HTTP的请求端真实的IP，只有在通过了HTTP 代理或者负载均衡服务器时才会添加该项。它不是RFC中定义的标准请求头信息，在squid缓存代理服务器开发文档中可以找到该项的详细介绍。<br>标准格式如下：<br>X-Forwarded-For: client1, proxy1, proxy2<br>从标准格式可以看出，X-Forwarded-For头信息可以有多个，中间用逗号分隔，<strong>第一项为真实的客户端ip，剩下的就是曾经经过的代理或负载均衡的ip地址，经过几个就会出现几个</strong>。</p>
-</blockquote>
-<h3 id="问题的关键"><a href="#问题的关键" class="headerlink" title="问题的关键"></a>问题的关键</h3><blockquote>
-<p>在默认情况下，Nginx并不会对X-Forwarded-For头做任何的处理，除非用户使用proxy_set_header 参数设置:</p>
+<p><img src="/assets/blogImg/image-20190716100252522.png" alt="image-20190716100252522"></p>
+<ul>
+<li><p>Java8全新日期时间API</p>
 <blockquote>
-<ol>
-<li>proxy_set_header X-Forwarded-For     $proxy_add_x_forwarded_for; </li>
-</ol>
+<p>Instant 它代表的是时间戳<br>LocalDate 不包含具体时间的日期，比如2014-01-14。它可以用来存储生日，周年纪念日，入职日期等。<br>LocalTime 它代表的是不含日期的时间<br>LocalDateTime 它包含了日期及时间，不过还是没有偏移信息或者说时区。<br>ZonedDateTime 这是一个包含时区的完整的日期时间，偏移量是以UTC/格林威治时间为基准的。</p>
 </blockquote>
-<p><strong>&#36;remote_addr用逗号分开，如果没有”X-Forwarded-For” 请求头，则  &#36;proxy_add_x_forwarded_for等于$remote_addr。&#36;remote_addr变量的值是客户端的IP。</strong></p>
-</blockquote>
-<h3 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h3><p>找到了问题的关键，于是运维先将” X-Forwarded-For”直接设置成&#36;remote_addr（这不符合这个head的标准定义）。</p>
-<p>而我们后端为了避免以后不会出现类似的问题，可以通过”X-Real-IP”—&gt;”X-Forwarded-For”—&gt;”remote_addr”的顺序拿到真实IP，注意拿到”X-Forwarded-For”之后判断如果为多个IP，取第一个即可。</p>
+</li>
+</ul>
+<p>如果我们要让框架支持新时间，我们可以自己写序列化与反序列化。</p>
+<p>1.pom引入jar包。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.fasterxml.jackson.datatype<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jackson-datatype-jdk8<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.9.9<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>2.定义LocalDateTime序列化组件。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> vc.thinker.userservice.common;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.JsonGenerator;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.JsonSerializer;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.SerializerProvider;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.time.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * LocalDateTime 序列化成时间戳</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> HeTongHao</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2019-07-15 18:23</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalDateTimeSerializer</span> <span class="keyword">extends</span> <span class="title">JsonSerializer</span>&lt;<span class="title">LocalDateTime</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> LocalDateTimeSerializer INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        INSTANCE = <span class="keyword">new</span> LocalDateTimeSerializer();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">LocalDateTimeSerializer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 当前时区偏移量</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ZoneOffset CURRENT_ZONE_OFFSET = ZoneOffset.ofHours(<span class="number">8</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">serialize</span><span class="params">(LocalDateTime localDateTime, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">//序列化为毫秒时间戳</span></span><br><span class="line">        jsonGenerator.writeNumber(localDateTime.toInstant(CURRENT_ZONE_OFFSET).toEpochMilli());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.继承WebMvcConfigurer，重写configureMessageConverters方法，添加我们定义的序列化组件即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> vc.thinker.userservice.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.annotation.JsonInclude;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.ObjectMapper;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;</span><br><span class="line"><span class="keyword">import</span> com.google.common.collect.Lists;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.converter.HttpMessageConverter;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.converter.StringHttpMessageConverter;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.servlet.config.annotation.WebMvcConfigurer;</span><br><span class="line"><span class="keyword">import</span> vc.thinker.userservice.common.LocalDateTimeDeserializer;</span><br><span class="line"><span class="keyword">import</span> vc.thinker.userservice.common.LocalDateTimeSerializer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.nio.charset.Charset;</span><br><span class="line"><span class="keyword">import</span> java.time.LocalDateTime;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * WebMvc配置</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> HeTongHao</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2019-07-11 17:00</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureMessageConverters</span><span class="params">(List&lt;HttpMessageConverter&lt;?&gt;&gt; converters)</span> </span>&#123;</span><br><span class="line">        List&lt;HttpMessageConverter&lt;?&gt;&gt; myConverters = Lists.newArrayList();</span><br><span class="line">        <span class="comment">// 添加 json 解析</span></span><br><span class="line">        MappingJackson2HttpMessageConverter jacksonConverter = <span class="keyword">new</span> MappingJackson2HttpMessageConverter();</span><br><span class="line">        jacksonConverter.setPrettyPrint(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">        jacksonConverter.setObjectMapper(<span class="keyword">new</span> ObjectMapper()</span><br><span class="line">                <span class="comment">//支持jdk8的json转换(如转换LocalDateTime)</span></span><br><span class="line">                .registerModules(<span class="keyword">new</span> JavaTimeModule()</span><br><span class="line">                        .addSerializer(LocalDateTime.class, LocalDateTimeSerializer.INSTANCE)</span><br><span class="line">                        .addDeserializer(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE)</span><br><span class="line">                )</span><br><span class="line">                <span class="comment">//值为null的json字段忽略</span></span><br><span class="line">                .setSerializationInclusion(JsonInclude.Include.NON_NULL));</span><br><span class="line"></span><br><span class="line">        StringHttpMessageConverter stringHttpMessageConverter = <span class="keyword">new</span> StringHttpMessageConverter(Charset.forName(<span class="string">"utf-8"</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 初步估计升级到 spring boot 2.0造成converters顺序有问题，会优使用框架定义的 converter,</span></span><br><span class="line"><span class="comment">         * 这里调整自定义的在前</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        myConverters.add(stringHttpMessageConverter);</span><br><span class="line">        myConverters.add(jacksonConverter);</span><br><span class="line">        myConverters.addAll(converters);</span><br><span class="line">        converters.clear();</span><br><span class="line">        converters.addAll(myConverters);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>配置之后效果</p>
+<p><img src="/assets/blogImg/image-20190716095824359.png" alt="image-20190716095824359"></p>
+</li>
+</ul>
+<p>以上示例只是说明了怎么去定义并且添加转换组件到spring中，以及怎么将返回数据类型为LocalDateTime的情况自动转换为时间戳。然而我们还需要让转换器支持从前端接收的时间戳。</p>
+<p>虽然已经用<strong>new JavaTimeModule()</strong> 就可以自动识别接收的时间戳了，但是前端有可能是传一个字符串类型的时间戳，所以我们还要再定义一个反序列化组件来适配，最后记得像序列化组件一样注册即可。</p>
+<p>下面贴上我的反序列化:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> vc.thinker.userservice.common;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.JsonParser;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.DeserializationContext;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.JsonDeserializer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.time.Instant;</span><br><span class="line"><span class="keyword">import</span> java.time.LocalDateTime;</span><br><span class="line"><span class="keyword">import</span> java.time.ZoneOffset;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 文本形式的时间戳,反序列化成LocalDateTime</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> HeTongHao</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2019-07-15 18:23</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalDateTimeDeserializer</span> <span class="keyword">extends</span> <span class="title">JsonDeserializer</span>&lt;<span class="title">LocalDateTime</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> LocalDateTimeDeserializer INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        INSTANCE = <span class="keyword">new</span> LocalDateTimeDeserializer();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">LocalDateTimeDeserializer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 当前时区偏移量</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ZoneOffset CURRENT_ZONE_OFFSET = ZoneOffset.ofHours(<span class="number">8</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> LocalDateTime <span class="title">deserialize</span><span class="params">(JsonParser jsonParser, DeserializationContext deserializationContext)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Instant.ofEpochMilli(Long.valueOf(jsonParser.getText())).atZone(CURRENT_ZONE_OFFSET).toLocalDateTime();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>LocalDate、LocalTime、ZonedDateTime也是类似的适配方式，可以按需适配。</li>
+</ul>
 
       
 
@@ -218,15 +227,15 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">WebServer</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Nginx</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Java8</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Spring Boot</a>
         		</li>
       		
 		</ul>
@@ -293,7 +302,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/05/14/Web服务获取客户端真实IP的方式/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/07/15/Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -307,18 +316,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/05/22/Intellij Idea 2019之前版本不会失效破解方案/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Intellij Idea 2019之前版本不会失效破解方案
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/05/13/Arthas - java服务监控神器/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Arthas - java服务监控神器</div>
+    <a href="/2019/06/04/SpringBoot下使用WebSocket笔记/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">使用WebSocket笔记</div>
       <i class="icon-circle-right"></i>
     </a>
   

@@ -6,20 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Web服务获取客户端真实IP的方式 | 何同昊blog</title>
+  <title>Archives: 2019/7 | 何同昊blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前言今天我们开发的项目在测试环境转生产环境之后，登录功能出现了与测试环境不一致的问题，检查之后发现是保存在数据库的IP地址超过了15位长度限制，可是通常使用的IP地址是一个32bit的数字，也就是我们常说的IPv4标准，这32bit的数字分成四组，也就是常见的255.255.255.255的样式，为什么会超过15位呢？">
-<meta name="keywords" content="Java,WebServer,Nginx">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Web服务获取客户端真实IP的方式">
-<meta property="og:url" content="http://yoursite.com/2019/05/14/Web服务获取客户端真实IP的方式/index.html">
+  <meta name="description" content="很惭愧,只做了一点微小的工作,谢谢大家.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="何同昊blog">
+<meta property="og:url" content="http://yoursite.com/archives/2019/07/index.html">
 <meta property="og:site_name" content="何同昊blog">
-<meta property="og:description" content="前言今天我们开发的项目在测试环境转生产环境之后，登录功能出现了与测试环境不一致的问题，检查之后发现是保存在数据库的IP地址超过了15位长度限制，可是通常使用的IP地址是一个32bit的数字，也就是我们常说的IPv4标准，这32bit的数字分成四组，也就是常见的255.255.255.255的样式，为什么会超过15位呢？">
+<meta property="og:description" content="很惭愧,只做了一点微小的工作,谢谢大家.">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-14T07:44:54.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Web服务获取客户端真实IP的方式">
-<meta name="twitter:description" content="前言今天我们开发的项目在测试环境转生产环境之后，登录功能出现了与测试环境不一致的问题，检查之后发现是保存在数据库的IP地址超过了15位长度限制，可是通常使用的IP地址是一个32bit的数字，也就是我们常说的IPv4标准，这32bit的数字分成四组，也就是常见的255.255.255.255的样式，为什么会超过15位呢？">
+<meta name="twitter:title" content="何同昊blog">
+<meta name="twitter:description" content="很惭愧,只做了一点微小的工作,谢谢大家.">
   
     <link rel="alternative" href="/atom.xml" title="何同昊blog" type="application/atom+xml">
   
@@ -141,98 +139,56 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Web服务获取客户端真实IP的方式" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      Web服务获取客户端真实IP的方式
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2019" class="archive-year">2019</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2019/07/15/Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换/" class="archive-article-date">
+  	<time datetime="2019-07-15T07:23:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-15</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2019/07/15/Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换/">Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换</a>
     </h1>
   
 
-        
-        <a href="/2019/05/14/Web服务获取客户端真实IP的方式/" class="archive-article-date">
-  	<time datetime="2019-05-14T01:31:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>今天我们开发的项目在测试环境转生产环境之后，登录功能出现了与测试环境不一致的问题，检查之后发现是保存在数据库的IP地址超过了15位长度限制，可是通常使用的IP地址是一个32bit的数字，也就是我们常说的IPv4标准，这32bit的数字分成四组，也就是常见的255.255.255.255的样式，为什么会超过15位呢？</p>
-<a id="more"></a>
-<h3 id="检查、分析问题"><a href="#检查、分析问题" class="headerlink" title="检查、分析问题"></a>检查、分析问题</h3><p>接下来通过与cto、运维的沟通得知，我们生产环境服务器是部署在VPN环境，用了多层反向代理。在Servlet里，获取客户端的IP地址的方法是：request.getRemoteAddr()，这种方法在大部分情况下都是有效的。但是在通过了Apache，Squid，Nginx等反向代理软件就不能获取到客户端的真实IP地址了。例如将<a href="http://192.168.101.88:80/" target="_blank" rel="noopener">http://192.168.101.88:80/</a> 的URL反向代理为<a href="http://hetonghao.com/" target="_blank" rel="noopener">http://hetonghao.com/</a> 的URL时，用request.getRemoteAddr()方法获取的IP地址是：127.0.0.1　或192.168.101.88，而并不是客户端的真实IP。</p>
-<p>原来是client端直接请求服务端，这时候通过request.getRemoteAddr()方法可以直接获取客户端的IP。但是做了代理之后呢，client端不是直接请求服务端，而是先请求代理服务器，由代理器去请求服务端，这时候服务端通过request.getRemoteAddr()方法拿到的理所当然是代理服务器的地址了。</p>
-<p>接着我和运维分别检查了服务器获取IP的代码和Nginx反向代理Request Head的配置，发现我们后端服务器获取Ip地址的代码是有做对反向代理的处理。而运维也正常的设置了Request Head，解析IP地址的代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getIpAddr</span><span class="params">(ServletRequest request)</span> </span>&#123;</span><br><span class="line">     HttpServletRequest localRequest = (HttpServletRequest)request;</span><br><span class="line">     String ip = localRequest.getHeader(<span class="string">"x-forwarded-for"</span>);</span><br><span class="line">     <span class="keyword">if</span> (ip == <span class="keyword">null</span> || ip.length() == <span class="number">0</span> || <span class="string">"unknown"</span>.equalsIgnoreCase(ip)) &#123;</span><br><span class="line">         ip = localRequest.getHeader(<span class="string">"Proxy-Client-IP"</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">if</span> (ip == <span class="keyword">null</span> || ip.length() == <span class="number">0</span> || <span class="string">"unknown"</span>.equalsIgnoreCase(ip)) &#123;</span><br><span class="line">         ip = localRequest.getHeader(<span class="string">"WL-Proxy-Client-IP"</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">if</span> (ip == <span class="keyword">null</span> || ip.length() == <span class="number">0</span> || <span class="string">"unknown"</span>.equalsIgnoreCase(ip)) &#123;</span><br><span class="line">         ip = request.getRemoteAddr();</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span> ip;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>运维Nginx的配置如下(Nginx标准配置)：</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">proxy_set_header</span> X-Real-IP    <span class="variable">$remote_addr</span>;</span><br><span class="line"><span class="attribute">proxy_set_header</span> X-Forwarded-For    <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br></pre></td></tr></table></figure>
-<p>然后连上服务器用Arthas在线监控了这个方法，发现从”x-forwarded-for”得到的的IP地址是多个IP用逗号”,”隔开。运维查了配置的详细处理:<a href="https://blog.csdn.net/bigtree_3721/article/details/72820594" target="_blank" rel="noopener">参考Nginx X-Forwarded-For和$proxy_add_x_forwarded_for的说明</a>。</p>
-<h3 id="X-Forwarded-For的定义"><a href="#X-Forwarded-For的定义" class="headerlink" title="X-Forwarded-For的定义"></a>X-Forwarded-For的定义</h3><blockquote>
-<p>X-Forwarded-For:简称XFF头，它代表客户端，也就是HTTP的请求端真实的IP，只有在通过了HTTP 代理或者负载均衡服务器时才会添加该项。它不是RFC中定义的标准请求头信息，在squid缓存代理服务器开发文档中可以找到该项的详细介绍。<br>标准格式如下：<br>X-Forwarded-For: client1, proxy1, proxy2<br>从标准格式可以看出，X-Forwarded-For头信息可以有多个，中间用逗号分隔，<strong>第一项为真实的客户端ip，剩下的就是曾经经过的代理或负载均衡的ip地址，经过几个就会出现几个</strong>。</p>
-</blockquote>
-<h3 id="问题的关键"><a href="#问题的关键" class="headerlink" title="问题的关键"></a>问题的关键</h3><blockquote>
-<p>在默认情况下，Nginx并不会对X-Forwarded-For头做任何的处理，除非用户使用proxy_set_header 参数设置:</p>
-<blockquote>
-<ol>
-<li>proxy_set_header X-Forwarded-For     $proxy_add_x_forwarded_for; </li>
-</ol>
-</blockquote>
-<p><strong>&#36;remote_addr用逗号分开，如果没有”X-Forwarded-For” 请求头，则  &#36;proxy_add_x_forwarded_for等于$remote_addr。&#36;remote_addr变量的值是客户端的IP。</strong></p>
-</blockquote>
-<h3 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h3><p>找到了问题的关键，于是运维先将” X-Forwarded-For”直接设置成&#36;remote_addr（这不符合这个head的标准定义）。</p>
-<p>而我们后端为了避免以后不会出现类似的问题，可以通过”X-Real-IP”—&gt;”X-Forwarded-For”—&gt;”remote_addr”的顺序拿到真实IP，注意拿到”X-Forwarded-For”之后判断如果为多个IP，取第一个即可。</p>
-
-      
-
-      
-        <div class="page-reward">
-          <a href="javascript:;" class="page-reward-btn tooltip-top">
-            <div class="tooltip tooltip-east">
-            <span class="tooltip-item">
-              赏
-            </span>
-            <span class="tooltip-content">
-              <span class="tooltip-text">
-                <span class="tooltip-inner">
-                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
-                  <div class="reward-box">
-                    
-                    
-                  </div>
-                </span>
-              </span>
-            </span>
-          </div>
-          </a>
-        </div>
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">WebServer</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Nginx</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Java8</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Spring Boot</a>
         		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -245,113 +201,17 @@
 	</div>
 
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/05/14/Web服务获取客户端真实IP的方式/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2019/05/22/Intellij Idea 2019之前版本不会失效破解方案/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Intellij Idea 2019之前版本不会失效破解方案
-        
-      </div>
-    </a>
   
   
-    <a href="/2019/05/13/Arthas - java服务监控神器/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Arthas - java服务监控神器</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-  
-  
+    </div></section>
   
 
-  
-
-  
-
-  
+    
 
 
           </div>
@@ -374,8 +234,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
