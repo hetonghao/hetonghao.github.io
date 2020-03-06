@@ -6,18 +6,25 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>何同昊blog</title>
+  <title>采用延时队列实现延时任务 | 何同昊blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="很惭愧,只做了一点微小的工作,谢谢大家.">
-<meta property="og:type" content="website">
-<meta property="og:title" content="何同昊blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="首先看看什么是延时队列：    通过源码我们得知，延时队列实现了BlockingQueue，说明它也是个阻塞队列，它的泛型是Delayed。 所以我们首先要实现这个延时对象，对应我们业务也就是延时订单(当然也可以抽象成功任何延时业务)：">
+<meta name="keywords" content="Java8,JUC,阻塞队列,延时队列">
+<meta property="og:type" content="article">
+<meta property="og:title" content="采用延时队列实现延时任务">
+<meta property="og:url" content="http://yoursite.com/2020/03/07/采用延时队列实现延时任务/index.html">
 <meta property="og:site_name" content="何同昊blog">
-<meta property="og:description" content="很惭愧,只做了一点微小的工作,谢谢大家.">
+<meta property="og:description" content="首先看看什么是延时队列：    通过源码我们得知，延时队列实现了BlockingQueue，说明它也是个阻塞队列，它的泛型是Delayed。 所以我们首先要实现这个延时对象，对应我们业务也就是延时订单(当然也可以抽象成功任何延时业务)：">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/2020/03/07/采用延时队列实现延时任务/image-20200306234125615.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/07/采用延时队列实现延时任务/image-20200306235503522.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/07/采用延时队列实现延时任务/image-20200307004244035.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/07/采用延时队列实现延时任务/image-20200307012834581.png">
+<meta property="og:updated_time" content="2020-03-06T18:04:18.449Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="何同昊blog">
-<meta name="twitter:description" content="很惭愧,只做了一点微小的工作,谢谢大家.">
+<meta name="twitter:title" content="采用延时队列实现延时任务">
+<meta name="twitter:description" content="首先看看什么是延时队列：    通过源码我们得知，延时队列实现了BlockingQueue，说明它也是个阻塞队列，它的泛型是Delayed。 所以我们首先要实现这个延时对象，对应我们业务也就是延时订单(当然也可以抽象成功任何延时业务)：">
+<meta name="twitter:image" content="http://yoursite.com/2020/03/07/采用延时队列实现延时任务/image-20200306234125615.png">
   
     <link rel="alternative" href="/atom.xml" title="何同昊blog" type="application/atom+xml">
   
@@ -139,16 +146,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-采用延时队列实现延时任务" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-采用延时队列实现延时任务" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/07/采用延时队列实现延时任务/">采用延时队列实现延时任务</a>
+    <h1 class="article-title" itemprop="name">
+      采用延时队列实现延时任务
     </h1>
   
 
@@ -169,9 +174,54 @@
 <p>通过源码我们得知，延时队列实现了BlockingQueue，说明它也是个阻塞队列，它的泛型是Delayed。</p>
 <p>所以我们首先要实现这个延时对象，对应我们业务也就是延时订单(当然也可以抽象成功任何延时业务)：</p>
 </blockquote>
-        
+<a id="more"></a>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> vc.coding.juc.queue;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.LocalDateTime;</span><br><span class="line"><span class="keyword">import</span> java.time.ZoneId;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Delayed;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 延时对象</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> HeTongHao</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2020/3/6 22:06</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DelayedOrder</span> <span class="keyword">implements</span> <span class="title">Delayed</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 记录id</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 创建时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> LocalDateTime createTime;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 到期时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> LocalDateTime expireTime;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DelayedOrder</span><span class="params">(Long id, <span class="keyword">long</span> delay, TimeUnit timeUnit)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.createTime = LocalDateTime.now();</span><br><span class="line">        <span class="keyword">this</span>.expireTime = <span class="keyword">this</span>.createTime.plusNanos(timeUnit.toNanos(delay));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DelayedOrder</span><span class="params">(Long id, LocalDateTime expireTime)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.createTime = LocalDateTime.now();</span><br><span class="line">        <span class="keyword">this</span>.expireTime = expireTime;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 将LocalDateTime转为时间戳</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> localDateTime</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">parseToTimestamp</span><span class="params">(LocalDateTime localDateTime)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getDelay</span><span class="params">(TimeUnit unit)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> parseToTimestamp(<span class="keyword">this</span>.expireTime) - parseToTimestamp(LocalDateTime.now());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Delayed delayed)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.expireTime.compareTo(((DelayedOrder) delayed).getExpireTime());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>id用来记录我们业务id，创建时间、到期时间需要维护好，用于下面两个方法的实现</p>
+<p>关键我们需实现getDelay、compareTo两个方法：</p>
+<p>getDelay：获取剩余的延迟时间，用于判断这个对象是否可以被取出，返回的值小于0代表剩余延时实现没有了可以取出，反之不能取出，实现：到期时间-当前时间=剩余的延迟时间。</p>
+<p>compareTo：用于比较两个对象在延迟队列里的排序，我们直接比较两个对象的超时时间即可，比较越小的越排在队列前面，下面代码可以验证：</p>
+</blockquote>
+<p><img src="/2020/03/07/采用延时队列实现延时任务/image-20200306235503522.png" alt="image-20200306235503522"></p>
+<blockquote>
+<p>接下来，<strong>这里关键的是创建一个消费者线程用take()来持续消费队列里的延迟订单对象</strong>，提供者则是用户源源不断产生的订单，直接上代码和一张图来了解延时队列与take()的工作方式:</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> vc.coding.juc.queue;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.LocalDateTime;</span><br><span class="line"><span class="keyword">import</span> java.time.format.DateTimeFormatter;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 延时处理</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> HeTongHao</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2020/3/6 22:58</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ExecutorService executorService = <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">2</span>, <span class="number">2</span>, <span class="number">0</span></span><br><span class="line">            , TimeUnit.SECONDS, <span class="keyword">new</span> ArrayBlockingQueue&lt;&gt;(<span class="number">1</span>)</span><br><span class="line">            , Executors.privilegedThreadFactory(), <span class="keyword">new</span> ThreadPoolExecutor.AbortPolicy());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(<span class="string">"mm:ss"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        DelayQueue&lt;DelayedOrder&gt; delayedOrders = <span class="keyword">new</span> DelayQueue&lt;&gt;();</span><br><span class="line">        <span class="comment">//启动消费者</span></span><br><span class="line">        startConsumption(delayedOrders);</span><br><span class="line">        <span class="comment">//启动提供者</span></span><br><span class="line">        startSupplier(delayedOrders);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 启动消费者</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> delayedOrders</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">startConsumption</span><span class="params">(DelayQueue&lt;DelayedOrder&gt; delayedOrders)</span> </span>&#123;</span><br><span class="line">        executorService.execute(() -&gt; &#123;</span><br><span class="line">            System.out.println(<span class="string">"消费者已启动"</span>);</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    System.out.println(<span class="string">"消费者尝试获取订单（如果队列没有可取的订单则阻塞，直到出现可取订单）"</span>);</span><br><span class="line">                    DelayedOrder delayedOrder = delayedOrders.take();</span><br><span class="line">                    System.out.println(<span class="string">"消费者,"</span></span><br><span class="line">                            + dateTimeFormatter.format(LocalDateTime.now()) + <span class="string">"消费订单id:"</span> + delayedOrder.getId());</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 启动提供者</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> delayedOrders</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">startSupplier</span><span class="params">(DelayQueue&lt;DelayedOrder&gt; delayedOrders)</span> </span>&#123;</span><br><span class="line">        executorService.execute(() -&gt; &#123;</span><br><span class="line">            System.out.println(<span class="string">"提供者已启动"</span>);</span><br><span class="line">            <span class="keyword">long</span> id = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">                <span class="comment">//每个订单延迟25秒消费</span></span><br><span class="line">                DelayedOrder delayedOrder = <span class="keyword">new</span> DelayedOrder(++id, <span class="number">30</span>, TimeUnit.SECONDS);</span><br><span class="line">                delayedOrders.put(delayedOrder);</span><br><span class="line">                System.out.println(<span class="string">"提供者,初始化订单:"</span> + dateTimeFormatter.format(delayedOrder.getCreateTime())</span><br><span class="line">                        + <span class="string">"产生一个订单id:"</span> + delayedOrder.getId()</span><br><span class="line">                        + <span class="string">",应在"</span> + dateTimeFormatter.format(delayedOrder.getExpireTime()) + <span class="string">"消费"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//模拟提供者，源源不断创建订单</span></span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                <span class="comment">//每个订单延迟5秒消费</span></span><br><span class="line">                DelayedOrder delayedOrder = <span class="keyword">new</span> DelayedOrder(++id, <span class="number">5</span>, TimeUnit.SECONDS);</span><br><span class="line">                System.out.println(<span class="string">"提供者,"</span> + dateTimeFormatter.format(delayedOrder.getCreateTime())</span><br><span class="line">                        + <span class="string">"产生一个订单id:"</span> + delayedOrder.getId()</span><br><span class="line">                        + <span class="string">",应在"</span> + dateTimeFormatter.format(delayedOrder.getExpireTime()) + <span class="string">"消费"</span>);</span><br><span class="line">                delayedOrders.put(delayedOrder);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="comment">//毎20秒创建一个订单</span></span><br><span class="line">                    TimeUnit.SECONDS.sleep(<span class="number">20</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/03/07/采用延时队列实现延时任务/image-20200307004244035.png" alt="image-20200307004244035"></p>
+<h4 id="接下来就是性能测试了"><a href="#接下来就是性能测试了" class="headerlink" title="接下来就是性能测试了"></a>接下来就是性能测试了</h4><blockquote>
+<p>我们根据实际业务情况来测试，main方法加入性能打印、修改了提供者的代码：首先瞬间创建十万条订单，再持续100毫秒一条订单（一秒10单）都是延迟30分钟消费，看下内存消耗与cpu占用怎么样：</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SneakyThrows</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">long</span> startMemory = Runtime.getRuntime().freeMemory();</span><br><span class="line">      System.out.println(<span class="string">"开始时消耗内存"</span> + consumeMB(startMemory));</span><br><span class="line">      DelayQueue&lt;DelayedOrder&gt; delayedOrders = <span class="keyword">new</span> DelayQueue&lt;&gt;();</span><br><span class="line">      <span class="comment">//启动消费者</span></span><br><span class="line">      startConsumption(delayedOrders);</span><br><span class="line">      <span class="comment">//启动提供者</span></span><br><span class="line">      startSupplier(delayedOrders);</span><br><span class="line">      <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">          TimeUnit.SECONDS.sleep(<span class="number">2</span>);</span><br><span class="line">          System.out.println(<span class="string">"实时时消耗内存"</span> + consumeMB(startMemory));</span><br><span class="line">          System.out.println(<span class="string">"-实时cpu占用"</span>+ CPUMonitorCalc.getInstance().getProcessCpu());</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">consumeMB</span><span class="params">(<span class="keyword">long</span> startMemory)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> (startMemory - Runtime.getRuntime().freeMemory()) / <span class="number">1024</span> / <span class="number">1024</span> + <span class="string">"MB"</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 启动提供者</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> delayedOrders</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">startSupplier</span><span class="params">(DelayQueue&lt;DelayedOrder&gt; delayedOrders)</span> </span>&#123;</span><br><span class="line">      executorService.execute(() -&gt; &#123;</span><br><span class="line">          System.out.println(<span class="string">"提供者已启动"</span>);</span><br><span class="line">          <span class="keyword">long</span> id = <span class="number">0</span>;</span><br><span class="line">          <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">10_0000</span>; i++) &#123;</span><br><span class="line">              <span class="comment">//每个订单延迟30分钟消费</span></span><br><span class="line">              DelayedOrder delayedOrder = <span class="keyword">new</span> DelayedOrder(++id, <span class="number">30</span>, TimeUnit.MINUTES);</span><br><span class="line">              delayedOrders.put(delayedOrder);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="comment">//模拟提供者，源源不断创建订单</span></span><br><span class="line">          <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">              <span class="comment">//每个订单延迟30分钟消费</span></span><br><span class="line">              DelayedOrder delayedOrder = <span class="keyword">new</span> DelayedOrder(++id, <span class="number">30</span>, TimeUnit.MINUTES);</span><br><span class="line">              delayedOrders.put(delayedOrder);</span><br><span class="line">              <span class="keyword">try</span> &#123;</span><br><span class="line">                  <span class="comment">//毎100毫秒创建一个订单,一秒10单</span></span><br><span class="line">                  TimeUnit.MILLISECONDS.sleep(<span class="number">100</span>);</span><br><span class="line">              &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                  e.printStackTrace();</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/03/07/采用延时队列实现延时任务/image-20200307012834581.png" alt="image-20200307012834581"></p>
+<blockquote>
+<p>看起来这么大数据量下内存占用与cpu占用也非常的低！</p>
+<p>并且在实际业务中我们只需跑1个额外的线程（消费者）即可，消耗的资源算是非常的少了。</p>
+<p>因为是自己的电脑所以不敢测试千万甚至亿级订单数量，各位有兴趣可以尝试~</p>
+</blockquote>
+<h4 id="以上就是我最近研究的延时队列，希望能为大家现有的延时策略提供改进的思想"><a href="#以上就是我最近研究的延时队列，希望能为大家现有的延时策略提供改进的思想" class="headerlink" title="以上就是我最近研究的延时队列，希望能为大家现有的延时策略提供改进的思想~"></a>以上就是我最近研究的延时队列，希望能为大家现有的延时策略提供改进的思想~</h4>
       
 
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
       
     </div>
     <div class="article-info article-info-index">
@@ -214,16 +264,75 @@
 
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/07/采用延时队列实现延时任务/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2020/03/07/采用延时队列实现延时任务/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2020/03/06/JUC线程池/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">线程池 ExecutorService 与 ScheduledExecutorService</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -243,561 +352,14 @@
 
 
 
-
   
-    <article id="post-JUC线程池" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/06/JUC线程池/">线程池 ExecutorService 与 ScheduledExecutorService</a>
-    </h1>
   
 
-        
-        <a href="/2020/03/06/JUC线程池/" class="archive-article-date">
-  	<time datetime="2020-03-06T07:23:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-06</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>池化技术</p>
-</blockquote>
-<p>程序运行的本质：占用系统资源！ 提高程序的使用率，降低我们一个性能消耗</p>
-<p>线程池、连接池、内存池、对象池 …………</p>
-<p>为什么要用线程池：线程复用</p>
-<h4 id="ExecutorService"><a href="#ExecutorService" class="headerlink" title="ExecutorService"></a>ExecutorService</h4><p>三大方法、七大参数、4种拒绝策略</p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Java8</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JUC</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">线程池</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/06/JUC线程池/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/14/Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换/">Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换</a>
-    </h1>
   
 
-        
-        <a href="/2019/07/14/Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换/" class="archive-article-date">
-  	<time datetime="2019-07-14T07:23:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>以前用的是Date作为时间组件，Spring MVC会自动进行 <strong>Date<--->时间戳</---></strong> 的转换,然而新项目换成Jdk8<code>新日期时间Api</code>，就不会自动转换成时间戳了,如果强行接收时间戳给<code>新日期时间Api</code>则会直接报400。如果直接返回<code>新日期时间Api</code>则会返回类似下图的结果，这可能不是我们想要的，前端处理起来也没有时间戳来得方便。</p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Java8</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">WebServer</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Spring Boot</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/07/14/Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-SpringBoot下使用WebSocket笔记" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/06/04/SpringBoot下使用WebSocket笔记/">使用WebSocket笔记</a>
-    </h1>
   
 
-        
-        <a href="/2019/06/04/SpringBoot下使用WebSocket笔记/" class="archive-article-date">
-  	<time datetime="2019-06-04T01:31:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-06-04</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="SpringBoot下使用WebSocket笔记"><a href="#SpringBoot下使用WebSocket笔记" class="headerlink" title="SpringBoot下使用WebSocket笔记"></a>SpringBoot下使用WebSocket笔记</h1>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">WebServer</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">WebSocket</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/06/04/SpringBoot下使用WebSocket笔记/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Intellij Idea 2019之前版本不会失效破解方案" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/22/Intellij Idea 2019之前版本不会失效破解方案/">Intellij Idea 2019之前版本不会失效破解方案</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/22/Intellij Idea 2019之前版本不会失效破解方案/" class="archive-article-date">
-  	<time datetime="2019-05-22T07:52:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-22</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>1.下载<a href="/assets/file/JetbrainsIdesCrack_4_2_release_sha1.jar">Intellij Idea破解jar包</a>。</p>
-<p>2.将这个jar包放入idea软件包bin目录下。</p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/22/Intellij Idea 2019之前版本不会失效破解方案/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Web服务获取客户端真实IP的方式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/14/Web服务获取客户端真实IP的方式/">Web服务获取客户端真实IP的方式</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/14/Web服务获取客户端真实IP的方式/" class="archive-article-date">
-  	<time datetime="2019-05-14T01:31:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>今天我们开发的项目在测试环境转生产环境之后，登录功能出现了与测试环境不一致的问题，检查之后发现是保存在数据库的IP地址超过了15位长度限制，可是通常使用的IP地址是一个32bit的数字，也就是我们常说的IPv4标准，这32bit的数字分成四组，也就是常见的255.255.255.255的样式，为什么会超过15位呢？</p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">WebServer</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Nginx</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/14/Web服务获取客户端真实IP的方式/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Arthas - java服务监控神器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/13/Arthas - java服务监控神器/">Arthas - java服务监控神器</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/13/Arthas - java服务监控神器/" class="archive-article-date">
-  	<time datetime="2019-05-13T07:20:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-13</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>Arthas 是Alibaba开源的Java诊断工具.</p>
-<p>Arthas支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 Tab 自动补全功能，进一步方便进行问题的定位和诊断.</p>
-<h3 id="为什么需要Arthas-它能做些什么"><a href="#为什么需要Arthas-它能做些什么" class="headerlink" title="为什么需要Arthas,它能做些什么?"></a>为什么需要Arthas,它能做些什么?</h3><p>1.我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？</p>
-<p>2.遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？</p>
-<p>3.线上遇到某个用户的数据处理有问题，但线上同样无法 debug，线下无法重现！</p>
-<p>4.是否有一个全局视角来查看系统的运行状况？</p>
-<p>5.有什么办法可以监控到JVM的实时运行状态？</p>
-<p>6.如果系统CPU占用突然暴涨，怎么快速定位问题？</p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Arthas</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">诊断、调试</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/13/Arthas - java服务监控神器/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
 
 
@@ -820,8 +382,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
