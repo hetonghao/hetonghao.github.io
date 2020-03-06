@@ -16,13 +16,13 @@
 <meta property="og:site_name" content="何同昊blog">
 <meta property="og:description" content="以前用的是Date作为时间组件，Spring MVC会自动进行 Date时间戳 的转换,然而新项目换成Jdk8新日期时间Api，就不会自动转换成时间戳了,如果强行接收时间戳给新日期时间Api则会直接报400。如果直接返回新日期时间Api则会返回类似下图的结果，这可能不是我们想要的，前端处理起来也没有时间戳来得方便。">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/assets/blogImg/image-20190716100252522.png">
-<meta property="og:image" content="http://yoursite.com/assets/blogImg/image-20190716095824359.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/14/Jdk%208%20LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换/blogImg/image-20190716100252522.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/14/Jdk%208%20LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换/blogImg/image-20190716095824359.png">
 <meta property="og:updated_time" content="2019-07-16T02:28:57.705Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换">
 <meta name="twitter:description" content="以前用的是Date作为时间组件，Spring MVC会自动进行 Date时间戳 的转换,然而新项目换成Jdk8新日期时间Api，就不会自动转换成时间戳了,如果强行接收时间戳给新日期时间Api则会直接报400。如果直接返回新日期时间Api则会返回类似下图的结果，这可能不是我们想要的，前端处理起来也没有时间戳来得方便。">
-<meta name="twitter:image" content="http://yoursite.com/assets/blogImg/image-20190716100252522.png">
+<meta name="twitter:image" content="http://yoursite.com/2019/07/14/Jdk%208%20LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换/blogImg/image-20190716100252522.png">
   
     <link rel="alternative" href="/atom.xml" title="何同昊blog" type="application/atom+xml">
   
@@ -166,7 +166,7 @@
       
         <p>以前用的是Date作为时间组件，Spring MVC会自动进行 <strong>Date<--->时间戳</---></strong> 的转换,然而新项目换成Jdk8<code>新日期时间Api</code>，就不会自动转换成时间戳了,如果强行接收时间戳给<code>新日期时间Api</code>则会直接报400。如果直接返回<code>新日期时间Api</code>则会返回类似下图的结果，这可能不是我们想要的，前端处理起来也没有时间戳来得方便。</p>
 <a id="more"></a>
-<p><img src="/assets/blogImg/image-20190716100252522.png" alt="image-20190716100252522"></p>
+<p><img src="/2019/07/14/Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换/blogImg/image-20190716100252522.png" alt="image-20190716100252522"></p>
 <ul>
 <li><p>Java8全新日期时间API</p>
 <blockquote>
@@ -183,7 +183,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> vc.thinker.userservice.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.annotation.JsonInclude;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.ObjectMapper;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;</span><br><span class="line"><span class="keyword">import</span> com.google.common.collect.Lists;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.converter.HttpMessageConverter;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.converter.StringHttpMessageConverter;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.servlet.config.annotation.WebMvcConfigurer;</span><br><span class="line"><span class="keyword">import</span> vc.thinker.userservice.common.LocalDateTimeDeserializer;</span><br><span class="line"><span class="keyword">import</span> vc.thinker.userservice.common.LocalDateTimeSerializer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.nio.charset.Charset;</span><br><span class="line"><span class="keyword">import</span> java.time.LocalDateTime;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * WebMvc配置</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> HeTongHao</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2019-07-11 17:00</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureMessageConverters</span><span class="params">(List&lt;HttpMessageConverter&lt;?&gt;&gt; converters)</span> </span>&#123;</span><br><span class="line">        List&lt;HttpMessageConverter&lt;?&gt;&gt; myConverters = Lists.newArrayList();</span><br><span class="line">        <span class="comment">// 添加 json 解析</span></span><br><span class="line">        MappingJackson2HttpMessageConverter jacksonConverter = <span class="keyword">new</span> MappingJackson2HttpMessageConverter();</span><br><span class="line">        jacksonConverter.setPrettyPrint(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">        jacksonConverter.setObjectMapper(<span class="keyword">new</span> ObjectMapper()</span><br><span class="line">                <span class="comment">//支持jdk8的json转换(如转换LocalDateTime)</span></span><br><span class="line">                .registerModules(<span class="keyword">new</span> JavaTimeModule()</span><br><span class="line">                        .addSerializer(LocalDateTime.class, LocalDateTimeSerializer.INSTANCE)</span><br><span class="line">                        .addDeserializer(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE)</span><br><span class="line">                )</span><br><span class="line">                <span class="comment">//值为null的json字段忽略</span></span><br><span class="line">                .setSerializationInclusion(JsonInclude.Include.NON_NULL));</span><br><span class="line"></span><br><span class="line">        StringHttpMessageConverter stringHttpMessageConverter = <span class="keyword">new</span> StringHttpMessageConverter(Charset.forName(<span class="string">"utf-8"</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 初步估计升级到 spring boot 2.0造成converters顺序有问题，会优使用框架定义的 converter,</span></span><br><span class="line"><span class="comment">         * 这里调整自定义的在前</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        myConverters.add(stringHttpMessageConverter);</span><br><span class="line">        myConverters.add(jacksonConverter);</span><br><span class="line">        myConverters.addAll(converters);</span><br><span class="line">        converters.clear();</span><br><span class="line">        converters.addAll(myConverters);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
 <li><p>配置之后效果</p>
-<p><img src="/assets/blogImg/image-20190716095824359.png" alt="image-20190716095824359"></p>
+<p><img src="/2019/07/14/Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换/blogImg/image-20190716095824359.png" alt="image-20190716095824359"></p>
 </li>
 </ul>
 <p>以上示例只是说明了怎么去定义并且添加转换组件到spring中，以及怎么将返回数据类型为LocalDateTime的情况自动转换为时间戳。然而我们还需要让转换器支持从前端接收的时间戳。</p>
@@ -316,6 +316,15 @@
   
 <nav id="article-nav">
   
+    <a href="/2020/03/06/JUC线程池/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          线程池 ExecutorService 与 ScheduledExecutorService
+        
+      </div>
+    </a>
+  
   
     <a href="/2019/06/04/SpringBoot下使用WebSocket笔记/" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title">使用WebSocket笔记</div>
@@ -361,7 +370,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2019 何同昊
+    		&copy; 2020 何同昊
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -444,7 +453,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Arthas</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">诊断、调试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -464,15 +481,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Arthas</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">诊断、调试</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">JUC</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">线程池</a>
               </li>
             
             <div class="clearfix"></div>

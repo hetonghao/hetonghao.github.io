@@ -6,18 +6,25 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Tag: Java | 何同昊blog</title>
+  <title>线程池 ExecutorService 与 ScheduledExecutorService | 何同昊blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="很惭愧,只做了一点微小的工作,谢谢大家.">
-<meta property="og:type" content="website">
-<meta property="og:title" content="何同昊blog">
-<meta property="og:url" content="http://yoursite.com/tags/Java/index.html">
+  <meta name="description" content="线程池 ExecutorService 与 ScheduledExecutorService 池化技术  程序运行的本质：占用系统资源！ ==提高程序的使用率，降低我们一个性能消耗== 线程池、连接池、内存池、对象池 ………… 为什么要用线程池：线程复用  关于我们的线程池  三大方法、七大参数、4种拒绝策略">
+<meta name="keywords" content="Java8,JUC,线程池">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线程池 ExecutorService 与 ScheduledExecutorService">
+<meta property="og:url" content="http://yoursite.com/2020/03/06/JUC线程池/index.html">
 <meta property="og:site_name" content="何同昊blog">
-<meta property="og:description" content="很惭愧,只做了一点微小的工作,谢谢大家.">
+<meta property="og:description" content="线程池 ExecutorService 与 ScheduledExecutorService 池化技术  程序运行的本质：占用系统资源！ ==提高程序的使用率，降低我们一个性能消耗== 线程池、连接池、内存池、对象池 ………… 为什么要用线程池：线程复用  关于我们的线程池  三大方法、七大参数、4种拒绝策略">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/2020/03/06/JUC线程池/image-20200304212338420.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/06/JUC线程池/image-20200306022607674.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/06/JUC线程池/image-20200306022847401-3437295.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/06/JUC线程池/image-20200306031027308-3437282.png">
+<meta property="og:updated_time" content="2020-03-06T11:07:51.473Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="何同昊blog">
-<meta name="twitter:description" content="很惭愧,只做了一点微小的工作,谢谢大家.">
+<meta name="twitter:title" content="线程池 ExecutorService 与 ScheduledExecutorService">
+<meta name="twitter:description" content="线程池 ExecutorService 与 ScheduledExecutorService 池化技术  程序运行的本质：占用系统资源！ ==提高程序的使用率，降低我们一个性能消耗== 线程池、连接池、内存池、对象池 ………… 为什么要用线程池：线程复用  关于我们的线程池  三大方法、七大参数、4种拒绝策略">
+<meta name="twitter:image" content="http://yoursite.com/2020/03/06/JUC线程池/image-20200304212338420.png">
   
     <link rel="alternative" href="/atom.xml" title="何同昊blog" type="application/atom+xml">
   
@@ -139,56 +146,138 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-JUC线程池" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      线程池 ExecutorService 与 ScheduledExecutorService
+    </h1>
+  
+
+        
+        <a href="/2020/03/06/JUC线程池/" class="archive-article-date">
+  	<time datetime="2020-03-06T07:23:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-06</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="线程池-ExecutorService-与-ScheduledExecutorService"><a href="#线程池-ExecutorService-与-ScheduledExecutorService" class="headerlink" title="线程池 ExecutorService 与 ScheduledExecutorService"></a>线程池 ExecutorService 与 ScheduledExecutorService</h3><blockquote>
+<p>池化技术</p>
+</blockquote>
+<p>程序运行的本质：占用系统资源！ ==提高程序的使用率，降低我们一个性能消耗==</p>
+<p>线程池、连接池、内存池、对象池 …………</p>
+<p>为什么要用线程池：线程复用</p>
+<blockquote>
+<p>关于我们的线程池</p>
+</blockquote>
+<p>三大方法、七大参数、4种拒绝策略</p>
+<a id="more"></a>
+<blockquote>
+<p>三大方法</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.coding.pool;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadPoolDemo01</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 单例，只能有一个线程！</span></span><br><span class="line"><span class="comment">//        ExecutorService threadPool = Executors.newSingleThreadExecutor();</span></span><br><span class="line">        <span class="comment">// 固定的线程数</span></span><br><span class="line"><span class="comment">//         ExecutorService threadPool = Executors.newFixedThreadPool(8);</span></span><br><span class="line">        <span class="comment">// 遇强则强！可伸缩！</span></span><br><span class="line"><span class="comment">//         ExecutorService threadPool = Executors.newCachedThreadPool();</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 线程池的使用方式！</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">30</span>; i++) &#123;</span><br><span class="line">                threadPool.execute(()-&gt;&#123;</span><br><span class="line">                    System.out.println(Thread.currentThread().getName() + <span class="string">" ok"</span>);</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="comment">// 使用完毕后需要关闭！</span></span><br><span class="line">            threadPool.shutdown();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>七大参数</p>
+</blockquote>
+<p>1、先看看这个三个方法的源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE, <span class="comment">// 约等于21亿</span></span><br><span class="line">                                      <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">                                      <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;());</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">                                      <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                      <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</span><br><span class="line"></span><br><span class="line">ThreadPoolExecutor(<span class="number">1</span>, <span class="number">1</span>, <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                    <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;())</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize, // 核心池线程数大小 (常用)</span></span></span><br><span class="line"><span class="function">                              <span class="keyword">int</span> maximumPoolSize,  <span class="comment">// 最大的线程数大小 (常用)</span></span></span><br><span class="line"><span class="function">                              <span class="keyword">long</span> keepAliveTime, <span class="comment">// 超时等待时间 (常用)</span></span></span><br><span class="line"><span class="function">                              TimeUnit unit, <span class="comment">// 时间单位 (常用)</span></span></span><br><span class="line"><span class="function">                              BlockingQueue&lt;Runnable&gt; workQueue, <span class="comment">// 阻塞队列(常用)</span></span></span><br><span class="line"><span class="function">                              ThreadFactory threadFactory, <span class="comment">// 线程工厂</span></span></span><br><span class="line"><span class="function">                              RejectedExecutionHandler handler <span class="comment">// 拒绝策略(常用)) &#123;</span></span></span><br><span class="line"><span class="function">    <span class="title">if</span> <span class="params">(corePoolSize &lt; <span class="number">0</span> ||</span></span></span><br><span class="line"><span class="function"><span class="params">        maximumPoolSize &lt;= <span class="number">0</span> ||</span></span></span><br><span class="line"><span class="function"><span class="params">        maximumPoolSize &lt; corePoolSize ||</span></span></span><br><span class="line"><span class="function"><span class="params">        keepAliveTime &lt; <span class="number">0</span>)</span></span></span><br><span class="line"><span class="function">        throw new <span class="title">IllegalArgumentException</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (workQueue == <span class="keyword">null</span> || threadFactory == <span class="keyword">null</span> || handler == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">    <span class="keyword">this</span>.acc = System.getSecurityManager() == <span class="keyword">null</span> ?</span><br><span class="line">        <span class="keyword">null</span> :</span><br><span class="line">    AccessController.getContext();</span><br><span class="line">    <span class="keyword">this</span>.corePoolSize = corePoolSize;</span><br><span class="line">    <span class="keyword">this</span>.maximumPoolSize = maximumPoolSize;</span><br><span class="line">    <span class="keyword">this</span>.workQueue = workQueue;</span><br><span class="line">    <span class="keyword">this</span>.keepAliveTime = unit.toNanos(keepAliveTime);</span><br><span class="line">    <span class="keyword">this</span>.threadFactory = threadFactory;</span><br><span class="line">    <span class="keyword">this</span>.handler = handler;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>自定义线程池的策略（推荐使用这种方式创建线程池、因为这样能让我们明确线程是怎样创建、销毁的，并且防止创建过多线程导致OOM异常）</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.coding.pool;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadPoolDemo01</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 单例，只能有一个线程！</span></span><br><span class="line"><span class="comment">//        ExecutorService threadPool = Executors.newSingleThreadExecutor();</span></span><br><span class="line">        <span class="comment">// 固定的线程数</span></span><br><span class="line"><span class="comment">//         ExecutorService threadPool = Executors.newFixedThreadPool(1);</span></span><br><span class="line">        <span class="comment">//遇强则强！可伸缩！</span></span><br><span class="line"><span class="comment">//         ExecutorService threadPool = Executors.newCachedThreadPool();</span></span><br><span class="line"></span><br><span class="line">        ExecutorService threadPool = <span class="keyword">new</span> ThreadPoolExecutor(</span><br><span class="line">                <span class="number">2</span>,</span><br><span class="line">                <span class="number">5</span>,</span><br><span class="line">                <span class="number">3L</span>,</span><br><span class="line">                TimeUnit.SECONDS,</span><br><span class="line">                <span class="keyword">new</span> LinkedBlockingDeque&lt;&gt;(<span class="number">3</span>),</span><br><span class="line">                Executors.defaultThreadFactory(),</span><br><span class="line">                <span class="keyword">new</span> ThreadPoolExecutor.CallerRunsPolicy());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 线程池的使用方式！</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">                threadPool.execute(()-&gt;&#123;</span><br><span class="line">                    System.out.println(Thread.currentThread().getName() + <span class="string">" ok"</span>);</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="comment">// 使用完毕后需要关闭！</span></span><br><span class="line">            threadPool.shutdown();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>四大拒绝策略 （）</p>
+</blockquote>
+<p><img src="/2020/03/06/JUC线程池/image-20200304212338420.png" alt="image-20200304212338420"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 1、ThreadPoolExecutor.AbortPolicy()；  抛出异常，丢弃任务</span></span><br><span class="line"><span class="comment">         * 思路：看到效果一样的东西，可以研究研究！</span></span><br><span class="line"><span class="comment">         * 2、ThreadPoolExecutor.DiscardPolicy()；不抛出异常，丢弃任务</span></span><br><span class="line"><span class="comment">         * 3、ThreadPoolExecutor.DiscardOldestPolicy()； 尝试获取任务，不一定执行！</span></span><br><span class="line"><span class="comment">         * 4、ThreadPoolExecutor.CallerRunsPolicy()； 哪来的去哪里找对应的线程执行！</span></span><br><span class="line"><span class="comment">         */</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>什么时候会触发拒绝策略？</p>
+</blockquote>
+<p>创建的任务&gt;阻塞队列数量(new LinkedBlockingDeque&lt;&gt;(3))+maximumPoolSize时</p>
+<blockquote>
+<p>请你谈谈 最大线程池 该如何设置啊？</p>
+</blockquote>
+<p><strong>CPU密集型：</strong> 根据CPU的处理器数量来定！保证最大效率</p>
+<p><strong>IO密集型：</strong> 50 个线程都是进程操作大io资源, 比较耗时！ &gt; 这个常用的 IO 任务数！</p>
+<h3 id="计划执行线程池"><a href="#计划执行线程池" class="headerlink" title="计划执行线程池"></a>计划执行线程池</h3><h5 id="ScheduledExecutorService-用于指定延时时间来执行指定任务，继承于ExecutorService。"><a href="#ScheduledExecutorService-用于指定延时时间来执行指定任务，继承于ExecutorService。" class="headerlink" title="ScheduledExecutorService 用于指定延时时间来执行指定任务，继承于ExecutorService。"></a>ScheduledExecutorService 用于指定延时时间来执行指定任务，继承于ExecutorService。</h5><blockquote>
+<p>构造函数有4个</p>
+</blockquote>
+<p><img src="/2020/03/06/JUC线程池/image-20200306022607674.png" alt="image-20200306022607674"></p>
+<p><img src="/2020/03/06/JUC线程池/image-20200306022847401-3437295.png" alt="image-20200306022847401"></p>
+<blockquote>
+<p>点进去发现，其实就是调用了父类的7大参数的构造函数，我们不能自己调整最大线程数、线程超时时间。</p>
+<p>按ExecutorService的规则来看，创建的线程超过corePoolSize+Queue队列数会自动增加线程数，通过测试发现，其实并不会增加执行的线程， new ScheduledThreadPoolExecutor(3)的线程数永远都是我们定义的3,如果我们创建6个线程执行，6个线程并不会同时计时，而是等待线程空闲后再开始计算延时！执行以下代码:</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> vc.coding.juc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.LocalDateTime;</span><br><span class="line"><span class="keyword">import</span> java.time.format.DateTimeFormatter;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ScheduledExecutorService;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ScheduledThreadPoolExecutor;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> HeTongHao</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2020/3/6 02:18</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ScheduledExecutor1</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 计划执行池</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ScheduledExecutorService scheduledExecutorService = <span class="keyword">new</span> ScheduledThreadPoolExecutor(<span class="number">3</span></span><br><span class="line">            , Executors.defaultThreadFactory(), <span class="keyword">new</span> ScheduledThreadPoolExecutor.AbortPolicy());</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">6</span>; i++) &#123;</span><br><span class="line">            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(<span class="string">"mm:ss"</span>);</span><br><span class="line">            scheduledExecutorService.schedule(() -&gt; &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    TimeUnit.SECONDS.sleep(<span class="number">2</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(<span class="string">"执行的时间"</span> + dateTimeFormatter.format(LocalDateTime.now()));</span><br><span class="line">            &#125;, <span class="number">2</span>, TimeUnit.SECONDS);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>执行结果：</p>
+<p>执行的时间59:44<br>执行的时间59:44<br>执行的时间59:44<br>执行的时间59:46<br>执行的时间59:46<br>执行的时间59:46</p>
+</blockquote>
+<blockquote>
+<p>这样的话我们定义足够多的核心线程数不就行了？像这样： new ScheduledThreadPoolExecutor(10000)</p>
+<p>问题来了：我想应用去创建订单时同时创建延时任务，超时去取消订单，如果一瞬间来了1000个订单，是否会创建1000个线程，占用过多内存？执行以下代码：</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> vc.coding.juc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.SneakyThrows;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.LocalDateTime;</span><br><span class="line"><span class="keyword">import</span> java.time.format.DateTimeFormatter;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ScheduledExecutorService;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ScheduledThreadPoolExecutor;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> HeTongHao</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2020/3/6 02:18</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ScheduledExecutor</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 计划执行池</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ScheduledExecutorService scheduledExecutorService = <span class="keyword">new</span> ScheduledThreadPoolExecutor(<span class="number">70</span></span><br><span class="line">            , Executors.defaultThreadFactory(), <span class="keyword">new</span> ScheduledThreadPoolExecutor.AbortPolicy());</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SneakyThrows</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> startMemory = Runtime.getRuntime().freeMemory();</span><br><span class="line">        System.out.println(<span class="string">"开始时内存"</span> + startMemory);</span><br><span class="line">        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(<span class="string">"mm:ss"</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">50</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="string">"创建时消耗内存："</span> + consumeMB(startMemory));</span><br><span class="line">            System.out.println(<span class="string">"创建线程数："</span> + (Thread.activeCount() - <span class="number">2</span>));</span><br><span class="line">            scheduledExecutorService.schedule(() -&gt; &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    TimeUnit.SECONDS.sleep(<span class="number">5</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(<span class="string">"执行完消耗内存"</span> + consumeMB(startMemory)</span><br><span class="line">                        + <span class="string">"时间"</span> + dateTimeFormatter.format(LocalDateTime.now()));</span><br><span class="line">            &#125;, <span class="number">2</span>, TimeUnit.SECONDS);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">"-实时消耗内存"</span> + consumeMB(startMemory));</span><br><span class="line">            TimeUnit.SECONDS.sleep(<span class="number">2</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">consumeMB</span><span class="params">(<span class="keyword">long</span> startMemory)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (startMemory - Runtime.getRuntime().freeMemory()) / <span class="number">1024</span> / <span class="number">1024</span> + <span class="string">"MB"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/03/06/JUC线程池/image-20200306031027308-3437282.png" alt="image-20200306031027308"></p>
+<blockquote>
+<p>运行的结果确实，消耗的内存随着线程的不断创建，消耗的内存越来越多，这样下去很容易出现OOM异常。</p>
+</blockquote>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>这个对象不适合订单结束、设备离线这类场景，适合一些对执行时机不必特别精准的，只需要晚于某个时间之后执行就行了的任务。</p>
+<p>我后续会在下面给出订单结束、设备离线这类场景正确的实现…</p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/06/04/SpringBoot下使用WebSocket笔记/" class="archive-article-date">
-  	<time datetime="2019-06-04T01:31:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-06-04</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/06/04/SpringBoot下使用WebSocket笔记/">使用WebSocket笔记</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Java8</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">WebServer</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JUC</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">WebSocket</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">线程池</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -201,169 +290,104 @@
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2020/03/06/JUC线程池/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/05/22/Intellij Idea 2019之前版本不会失效破解方案/" class="archive-article-date">
-  	<time datetime="2019-05-22T07:52:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-22</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2019/07/14/Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Jdk 8 LocalDateTime整合SpringBoot序列化Json自动与时间戳互相转换</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/22/Intellij Idea 2019之前版本不会失效破解方案/">Intellij Idea 2019之前版本不会失效破解方案</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/05/14/Web服务获取客户端真实IP的方式/" class="archive-article-date">
-  	<time datetime="2019-05-14T01:31:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-14</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/14/Web服务获取客户端真实IP的方式/">Web服务获取客户端真实IP的方式</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">WebServer</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Nginx</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
+        
+        
+    </div>
+</aside>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/05/13/Arthas - java服务监控神器/" class="archive-article-date">
-  	<time datetime="2019-05-13T07:20:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-13</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/13/Arthas - java服务监控神器/">Arthas - java服务监控神器</a>
-    </h1>
-  
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Arthas</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">诊断、调试</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -386,9 +410,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
